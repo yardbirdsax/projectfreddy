@@ -1,0 +1,3 @@
+connection_string: "HostName=jefpilab.azure-devices.net;DeviceId=terrariumpi;SharedAccessKey=A0IYut1LpQxFNzarhz5AqY+n7LuxfRaYYjZ7cKe2Mmk="
+send_interval: 10
+max_send_errors: 100

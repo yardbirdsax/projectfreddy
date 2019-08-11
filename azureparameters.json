@@ -1,0 +1,11 @@
+{
+    "iotHubName": {
+       "value":"jefpilab"
+    },
+    "SkuName": {
+        "value": "F1"
+    },
+    "capacity": {
+        "value": 1
+    }
+}
