@@ -11,27 +11,8 @@ from iothub_client import IoTHubMessage, IoTHubMessageDispositionResult, IoTHubE
 from socket import gethostname
 from w1thermsensor import W1ThermSensor
 
-# Read configuration file
-current_dir = os.path.dirname(os.path.realpath(__file__))
-config_file_path = current_dir + '/config.yaml'
-with open(config_file_path,"r") as f:
-    config = yaml.load(f,yaml.SafeLoader)
-
-# Constants
-CONST_CONNECTION_STRING = config["connection_string"]
-CONST_SEND_INTERVAL = config["send_interval"]
-CONST_HOST_NAME = gethostname()
-CONST_MSG_TEXT = "{\"device\":\"%s\",\"temp\":%.2f,\"datetime\":\"%s\"}"
-CONST_IOT_PROTOCOL = IoTHubTransportProvider.MQTT
-CONST_MAX_SEND_ERRORS = config["max_send_errors"]
-CONST_STR_OK = "OK"
-
-SEND_CALLBACKS = 0
-SEND_ERRORS = 0
-
-
 def iothub_client_init():
-    client = IoTHubClient(CONST_CONNECTION_STRING,CONST_IOT_PROTOCOL)
+    client = IoTHubClient(connection_string,CONST_IOT_PROTOCOL)
     return client
 
 def get_temp():
@@ -50,13 +31,30 @@ def send_confirmation_callback(message, result, user_context):
         log("IoTHub responed with error status: %s. Current error count is %i." % (result,SEND_ERRORS))
 
 
-    if (SEND_ERRORS > CONST_MAX_SEND_ERRORS):
-        log ("Maxium consecutive send error count (%i) exceeded. Program will now exit." % CONST_MAX_SEND_ERRORS)
+    if (SEND_ERRORS > max_send_errors):
+        log ("Maxium consecutive send error count (%i) exceeded. Program will now exit." % max_send_errors)
         exit(1)
 
 def log(message):
     formatted_datetime = datetime.utcnow().replace(tzinfo=pytz.utc).strftime("%Y-%m-%dT%H:%m:%S%z")
     print("[%s]\t%s" % (formatted_datetime,message))
+
+# Read configurations
+connection_string = os.environ.get('temp2aziot.connection_string')
+if (connection_string is None):
+    log("Required environment variable 'temp2aziot.connection_string' is not set. Application will exit.")
+    exit(1)
+send_interval = os.getenv('temp2aziot.send_interval',10)
+max_send_errors = os.getenv('temp2aziot.max_send_errors',100)
+
+# Constants
+CONST_HOST_NAME = gethostname()
+CONST_MSG_TEXT = "{\"device\":\"%s\",\"temp\":%.2f,\"datetime\":\"%s\"}"
+CONST_IOT_PROTOCOL = IoTHubTransportProvider.MQTT
+CONST_STR_OK = "OK"
+
+SEND_CALLBACKS = 0
+SEND_ERRORS = 0
 
 while True:
     client = iothub_client_init()
@@ -69,4 +67,4 @@ while True:
     log("Sending message: %s" % hub_msg.get_string())
     client.send_event_async(hub_msg,send_confirmation_callback,None)
 
-    time.sleep(CONST_SEND_INTERVAL)
+    time.sleep(send_interval)
