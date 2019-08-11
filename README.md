@@ -49,8 +49,24 @@ This folder contains some sample code on how to read temperature data from a DS1
 
 ## Preparing the Raspberry Pi device
 
-1. Install the Azure IOT device client and other required packages for Python.
+1. Install Docker.
 
     ```bash
-    sudo pip3 install azure-iothub-device-client pyyaml w1thermsensor
-    sudo apt-get install libboost-python1.62.0
+    curl -sSL https://get.docker.com | sudo sh
+    ```
+
+1. Copy the app/config.yaml file to a directory on the Pi. The directory must be readable by the user with the ID 1000, which is what the container will run as.
+1. Edit the copied config.yaml and replace the value of the `connection_string` key with the connection string for your IOT Hub as captured in the [Provisioning your Pi Device](#Provisioning-your-Pi-device) section above.
+1. Run the container.
+
+    ```bash
+    sudo docker run -v <path to config.yaml file>:/bin/temp2aziot/config.yaml -d -h ${HOSTNAME} --name ${HOSTNAME}-temp2aziot yardbirdsax/temp2aziot:latest
+    sudo docker logs ${HOSTNAME}-temp2aziot -f
+    ```
+
+    You should see something like this in the output.
+
+    ```
+    [2019-08-11T14:08:04+0000]      Sending message: {"device":"terrariumpi","temp":94.33,"datetime":"2019-08-11T14:08:04+0000"}
+    [2019-08-11T14:08:05+0000]      IoT Hub responded to message with status: OK
+    ```
