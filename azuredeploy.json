@@ -32,17 +32,122 @@
             }
         }
     },
-    "variables": {},
+    "variables": {
+        "uniqueString":"[concat(resourceGroup().name,uniqueString(subscription().id))]",
+        "len":"[if(less(23,length(variables('uniqueString'))),23,length(variables('uniqueString')))]",
+        "storageAccountName":"[substring(variables('uniqueString'),0,variables('len'))]",
+        "functionAppName":"[substring(variables('uniqueString'),0,variables('len'))]",
+        "consumerGroupName":"[concat(parameters('iotHubName'),'/events/StreamAnalytics')]"
+    },
     "resources": [
         {
             "type": "Microsoft.Devices/IotHubs",
             "name": "[parameters('iotHubName')]",
             "apiVersion": "2018-04-01",
             "location":"[resourceGroup().location]",
-            "properties":{},
+            "properties":{
+                "authorizationPolicies":[
+                    {
+                        "keyName": "StreamAnalytics",
+                        "rights":"RegistryWrite, ServiceConnect"
+                    }
+                ]
+            },
             "sku":{
                 "name":"[parameters('SkuName')]",
                 "capacity":"[parameters('capacity')]"
+            }
+        },
+        {
+            "type": "Microsoft.Devices/iotHubs/eventhubEndpoints/ConsumerGroups",
+            "name": "[variables('consumerGroupName')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Devices/iotHubs',parameters('iotHubName'))]"
+            ],
+            "apiVersion": "2018-04-01"
+        },
+        {
+            "type": "Microsoft.StreamAnalytics/streamingjobs",
+            "name": "[concat(resourceGroup().name,'-StreamingJob')]",
+            "apiVersion": "2016-03-01",
+            "location":"[resourceGroup().location]",
+            "dependsOn": [
+                "[concat('Microsoft.Devices/iotHubs/',parameters('iotHubName'),'/eventHubEndpoints/events/ConsumerGroups/streamanalytics')]"
+            ],
+            "properties": {
+                "sku":{
+                    "name":"Standard"
+                },
+                "outputErrorPolicy":"Drop",
+                "inputs":[
+                    {
+                        "name": "IOTHub",
+                        "properties":{
+                            "type": "Stream",
+                            "datasource":{
+                                "type": "Microsoft.Devices/IotHubs",
+                                "properties":{
+                                    "consumerGroupName": "streamanalytics",
+                                    "endpoint": "messages/events",
+                                    "iotHubNamespace": "[parameters('iotHubName')]",
+                                    "sharedAccessPolicyName": "StreamAnalytics",
+                                    "sharedAccessPolicyKey": "[listKeys(resourceId('Microsoft.Devices/iotHubs',parameters('iotHubName')),'2018-04-01',)]"
+                                }
+                            },
+                            "serialization":{
+                                "type": "Json",
+                                "properties":{
+                                    "encoding":"UTF8"
+                                }
+                            }
+                        }
+                    }
+                ],
+                "outputs":[]
+            }
+        },
+        {
+            "type": "Microsoft.Web/sites",
+            "apiVersion": "2016-03-01",
+            "name": "[variables('functionAppName')]",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]"
+            ],
+            "kind": "functionapp,linux",
+            "properties": {
+                "name": "[variables('functionAppName')]",
+                "siteConfig": {
+                    "appSettings": [
+                        {
+                            "name": "FUNCTIONS_WORKER_RUNTIME",
+                            "value": "dotnet"
+                        },
+                        {
+                            "name": "AzureWebJobsStorage",
+                            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=',variables('storageAccountName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')), '2015-05-01-preview').key1)]"
+                        },
+                        {
+                            "name": "FUNCTIONS_EXTENSION_VERSION",
+                            "value": "~2"
+                        },
+                        {
+                            "name": "WEBSITE_NODE_DEFAULT_VERSION",
+                            "value": "10.14.1"
+                        }
+                    ]
+                },
+                "clientAffinityEnabled": false,
+                "reserved": true
+            }
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts",
+            "apiVersion": "2015-05-01-preview",
+            "name": "[variables('storageAccountName')]",
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "accountType": "Standard_LRS"
             }
         }
     ],
