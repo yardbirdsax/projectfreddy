@@ -33,7 +33,7 @@
         }
     },
     "variables": {
-        "uniqueString":"[concat(resourceGroup().name,uniqueString(subscription().id))]",
+        "uniqueString":"[concat(toLower(resourceGroup().name),uniqueString(subscription().id))]",
         "len":"[if(less(23,length(variables('uniqueString'))),23,length(variables('uniqueString')))]",
         "storageAccountName":"[substring(variables('uniqueString'),0,variables('len'))]",
         "functionAppName":"[substring(variables('uniqueString'),0,variables('len'))]",
@@ -71,6 +71,7 @@
             "name": "[concat(resourceGroup().name,'-StreamingJob')]",
             "apiVersion": "2016-03-01",
             "location":"[resourceGroup().location]",
+            "condition":false,
             "dependsOn": [
                 "[concat('Microsoft.Devices/iotHubs/',parameters('iotHubName'),'/eventHubEndpoints/events/ConsumerGroups/streamanalytics')]"
             ],
@@ -91,7 +92,7 @@
                                     "endpoint": "messages/events",
                                     "iotHubNamespace": "[parameters('iotHubName')]",
                                     "sharedAccessPolicyName": "StreamAnalytics",
-                                    "sharedAccessPolicyKey": "[listKeys(resourceId('Microsoft.Devices/iotHubs',parameters('iotHubName')),'2018-04-01',)]"
+                                    "sharedAccessPolicyKey": "[listKeys(resourceId('Microsoft.Devices/iotHubs',parameters('iotHubName')),'2018-04-01')]"
                                 }
                             },
                             "serialization":{
@@ -107,49 +108,37 @@
             }
         },
         {
-            "type": "Microsoft.Web/sites",
-            "apiVersion": "2016-03-01",
-            "name": "[variables('functionAppName')]",
-            "location": "[resourceGroup().location]",
-            "dependsOn": [
-                "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]"
-            ],
-            "kind": "functionapp,linux",
-            "properties": {
-                "name": "[variables('functionAppName')]",
-                "siteConfig": {
-                    "appSettings": [
-                        {
-                            "name": "FUNCTIONS_WORKER_RUNTIME",
-                            "value": "dotnet"
-                        },
-                        {
-                            "name": "AzureWebJobsStorage",
-                            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=',variables('storageAccountName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')), '2015-05-01-preview').key1)]"
-                        },
-                        {
-                            "name": "FUNCTIONS_EXTENSION_VERSION",
-                            "value": "~2"
-                        },
-                        {
-                            "name": "WEBSITE_NODE_DEFAULT_VERSION",
-                            "value": "10.14.1"
-                        }
-                    ]
-                },
-                "clientAffinityEnabled": false,
-                "reserved": true
-            }
-        },
-        {
             "type": "Microsoft.Storage/storageAccounts",
             "apiVersion": "2015-05-01-preview",
             "name": "[variables('storageAccountName')]",
             "location": "[resourceGroup().location]",
             "properties": {
                 "accountType": "Standard_LRS"
-            }
+            },
+            "resources": [
+                {
+                    "apiVersion":"2019-04-01",
+                    "type":"Microsoft.Storage/storageAccounts/blobServices/containers",
+                    "name":"[concat(variables('storageAccountName'),'/default/iotprocessor')]",
+                    "dependsOn":[
+                        "[variables('storageAccountName')]"
+                    ]
+                }       
+            ]
         }
     ],
-    "outputs": {}
+    "outputs": {
+        "iotHubConnectionString":{
+            "type":"string",
+            "value":"[concat('Endpoint=',reference(resourceId('Microsoft.Devices/IoTHubs',parameters('iothubName'))).eventHubEndpoints.events.endpoint,';SharedAccessKeyName=iothubowner;SharedAccessKey=',listKeys(resourceId('Microsoft.Devices/IotHubs',parameters('iothubName')),'2018-04-01').value[0].primaryKey)]"
+        },
+        "storageAccount":{
+            "type": "string",
+            "value": "[variables('storageAccountName')]"
+        },
+        "storageAccountKey":{
+            "type": "string",
+            "value": "[listKeys(resourceId('Microsoft.Storage/storageAccounts',variables('storageAccountName')),'2019-04-01').keys[0].value]"
+        }
+    }
 }       
