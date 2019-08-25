@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+import re
 import yaml
 import time
 import os
@@ -40,12 +41,12 @@ def log(message):
     print("[%s]\t%s" % (formatted_datetime,message))
 
 # Read configurations
-connection_string = os.environ.get('temp2aziot.connection_string')
+connection_string = os.environ.get('iot_connection_string')
 if (connection_string is None):
-    log("Required environment variable 'temp2aziot.connection_string' is not set. Application will exit.")
+    log("Required environment variable 'iot_connection_string' is not set. Application will exit.")
     exit(1)
-send_interval = os.getenv('temp2aziot.send_interval',10)
-max_send_errors = os.getenv('temp2aziot.max_send_errors',100)
+send_interval = os.getenv('send_interval',10)
+max_send_errors = os.getenv('max_send_errors',100)
 
 # Constants
 CONST_HOST_NAME = gethostname()
@@ -55,6 +56,9 @@ CONST_STR_OK = "OK"
 
 SEND_CALLBACKS = 0
 SEND_ERRORS = 0
+
+connection_string_redact = re.sub("AccessKey=.+","AccessKey=xxxxx",connection_string)
+log("Connection string is %s" % connection_string_redact)
 
 while True:
     client = iothub_client_init()
