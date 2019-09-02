@@ -60,11 +60,12 @@ prometheus:
   alertmanager:
     ## If false, alertmanager will not be installed
     ##
-    enabled: false
+    enabled: true
 
     ## alertmanager container name
     ##
     name: alertmanager
+    fullnameOverride: alertmanager
 
     ## alertmanager container image
     ##
@@ -1056,18 +1057,26 @@ prometheus:
 
     ## Alerts configuration
     ## Ref: https://prometheus.io/docs/prometheus/latest/configuration/alerting_rules/
-    alerts: {}
-    # groups:
-    #   - name: Instances
-    #     rules:
-    #       - alert: InstanceDown
-    #         expr: up == 0
-    #         for: 5m
-    #         labels:
-    #           severity: page
-    #         annotations:
-    #           description: '{{ $labels.instance }} of job {{ $labels.job }} has been down for more than 5 minutes.'
-    #           summary: 'Instance {{ $labels.instance }} down'
+    alerts:
+      groups:
+      - name: Terrarium Temperatures
+        rules:
+          - alert: Temperature High
+            expr: current_temperature > 100
+            for: 5m
+            labels:
+              severity: page
+            annotations:
+              description: '{{ $labels.deviceName}} is reporting a high temperature ({{ .Value }}).'
+              summary: 'Device {{ $labels.deviceName }} reporting high temperature.'
+          - alert: Temperature Low
+            expr: current_temperature < 70
+            for: 5m
+            labels:
+              severity: page
+            annotations:
+              description: '{{ $labels.deviceName}} is reporting a low temperature ({{ .Value }}).'
+              summary: 'Device {{ $labels.deviceName }} reporting low temperature.'
 
     rules: {}
 
