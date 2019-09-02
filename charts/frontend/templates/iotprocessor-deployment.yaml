@@ -1,0 +1,65 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "iotprocessor.fullname" . }}
+  labels:
+{{ include "iotprocessor.labels" . | indent 4 }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "iotprocessor.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  template:
+    metadata:
+      annotations:
+        app.projectfreddy/release: {{ .Release.Revision | quote }}
+      labels:
+        app.kubernetes.io/name: {{ include "iotprocessor.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+    spec:
+    {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.iotprocessor.image.repository }}:{{ .Values.iotprocessor.image.tag }}"
+          imagePullPolicy: {{ .Values.iotprocessor.image.pullPolicy }}
+          # command: ["/bin/bash","-c","--"]
+          # args: ["while true; do sleep 10; date; done"]
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          ports:
+            - containerPort: 9090
+          env:
+            - name: event_hub_connection_string
+              valueFrom:
+                  secretKeyRef:
+                    key: event_hub_connection_string
+                    name: {{ include "iotprocessor.fullname" . | quote }}
+            - name: event_hub_name
+              value: {{ .Values.eventHub.name | quote }}
+            - name: storage_container_name
+              value: {{ .Values.storageAccount.container.name }}
+            - name: storage_account_name
+              value: {{ .Values.storageAccount.name | quote }}
+            - name: storage_account_key
+              valueFrom:
+                secretKeyRef:
+                  key: storage_account_key
+                  name: {{ include "iotprocessor.fullname" . | quote }}
+            - name: log_level
+              value: {{ .Values.iotprocessor.logLevel }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
