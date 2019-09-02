@@ -44,6 +44,8 @@ namespace iotprocessor
                 .CreateLogger();
             Log.Logger = _log;
 
+            Log.Debug(String.Format("Storage account name is {0}",strStorageAccountName));
+
             int processId = System.Diagnostics.Process.GetCurrentProcess().Id;
 
             Log.Information($"Current process ID is {processId}.");
