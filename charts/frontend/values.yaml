@@ -11,6 +11,7 @@ iotprocessor:
     pullPolicy: Always
   labels: {}
   logLevel: "info"
+  includeReleaseRevisionAnnotation: false
 
 imagePullSecrets: []
 nameOverride: ""
@@ -18,13 +19,13 @@ fullnameOverride: ""
 
 eventHub:
   connectionString: ""
-  name: "iothub-ehub-jefpilab-1719751-4804eb646d"
+  name: ""
 
 storageAccount:
-  name: "pilabiub22trozorj6"
+  name: ""
   key: ""
   container:
-    name: "iotprocessor"
+    name: ""
 
 prometheus:
   enabled: true
@@ -1040,15 +1041,16 @@ prometheus:
         # slack_api_url: ''
 
       receivers:
-        - name: default-receiver
-          # slack_configs:
-          #  - channel: '@you'
-          #    send_resolved: true
+        - name: slack
+          slack_configs:
+          - channel: '#alerts'
+            send_resolved: true
+            api_url: ""
 
       route:
         group_wait: 10s
         group_interval: 5m
-        receiver: default-receiver
+        receiver: slack
         repeat_interval: 3h
 
   ## Prometheus server ConfigMap entries
@@ -1482,7 +1484,7 @@ grafana:
     labels: {}
     path: /
     hosts:
-      - freddy.feiermanfamily.com
+      - mydomain.local
     tls: []
     #  - secretName: chart-example-tls
     #    hosts:
