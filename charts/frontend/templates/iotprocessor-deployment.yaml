@@ -12,8 +12,10 @@ spec:
       app.kubernetes.io/instance: {{ .Release.Name }}
   template:
     metadata:
+      {{- if eq .Values.iotprocessor.includeReleaseRevisionAnnotation true }}
       annotations:
         app.projectfreddy/release: {{ .Release.Revision | quote }}
+      {{- end }}
       labels:
         app.kubernetes.io/name: {{ include "iotprocessor.name" . }}
         app.kubernetes.io/instance: {{ .Release.Name }}
