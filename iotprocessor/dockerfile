@@ -1,0 +1,7 @@
+FROM mcr.microsoft.com/dotnet/core/runtime:2.2
+
+RUN apt-get update && apt-get upgrade -y
+
+COPY bin/release/netcoreapp2.2/publish/ app/
+
+ENTRYPOINT ["dotnet","app/iotprocessor.dll"]
