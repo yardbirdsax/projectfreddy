@@ -1,0 +1,4 @@
+iotprocessor/bin/*
+iotprocessor/obj/*
+charts/frontend/charts/*
+chart/pi2aziot/charts/*
