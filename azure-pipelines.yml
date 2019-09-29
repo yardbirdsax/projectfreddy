@@ -33,7 +33,8 @@ stages:
       displayName: Build Pi2AzIot image
       inputs:
         command: buildAndPush
+        containerRegistry: "Docker Hub"
         dockerfile: 'pi2aziot/dockerfile'
-        repository: yardbirdsax
+        repository: yardbirdsax/pi2aziot
         tags: |
           $(tag)
