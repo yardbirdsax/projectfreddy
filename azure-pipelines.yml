@@ -24,10 +24,16 @@ stages:
       inputs:
         targetType: 'inline'
         script: 'docker run --rm --privileged multiarch/qemu-user-static:register --reset'
-    - task: Docker@2
-      displayName: Build an image
+    - task: DOcker@2
+      displayName: Login
       inputs:
-        command: build
-        dockerfile: '**/dockerfile'
+        command: login
+        containerRegistry: "Docker Hub"
+    - task: Docker@2
+      displayName: Build Pi2AzIot image
+      inputs:
+        command: buildAndPush
+        dockerfile: 'pi2aziot/dockerfile'
+        repository: yardbirdsax
         tags: |
           $(tag)
