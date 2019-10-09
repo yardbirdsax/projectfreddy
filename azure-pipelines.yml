@@ -35,6 +35,7 @@ stages:
         command: buildAndPush
         containerRegistry: "Docker Hub"
         dockerfile: 'pi2aziot/dockerfile'
-        repository: yardbirdsax/pi2aziot
+        repository: yardbirdsax/temp2aziot
         tags: |
-          $(tag)
+          $(Build.SourceBranchName)-latest
+          $(Build.BuildNumber)
