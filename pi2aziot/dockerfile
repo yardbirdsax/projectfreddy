@@ -7,7 +7,8 @@ RUN apt-get update && apt-get install -y cmake build-essential curl libcurl4-ope
 
 COPY app/ /bin/temp2aziot/
 
-RUN pip3 install -r /bin/temp2aziot/requirements.txt --retries 100 --timeout 60
+RUN pip3 install --upgrade pip --retries 100 --timeout 100
+RUN pip3 install -r /bin/temp2aziot/requirements.txt --retries 100 --timeout 100
 
 RUN echo "dtoverlay=w1-gpio" >> /boot/config.txt
 
