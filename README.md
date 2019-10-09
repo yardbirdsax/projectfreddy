@@ -1,5 +1,7 @@
 # Azure IOT Hub and Raspberry Pi Sample
 
+[![Build Status](https://dev.azure.com/yardbirdsax/projectfreddy/_apis/build/status/yardbirdsax.projectfreddy?branchName=dev)](https://dev.azure.com/yardbirdsax/projectfreddy/_build/latest?definitionId=3&branchName=dev)
+
 This folder contains some sample code on how to read temperature data from a DS18B20 sensor and send to Azure IOT hubs.
 
 ## Pre-requisites
