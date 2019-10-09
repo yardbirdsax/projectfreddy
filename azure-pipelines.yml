@@ -29,6 +29,12 @@ stages:
       inputs:
         command: login
         containerRegistry: "Docker Hub"
+    - task: DotNetCoreCLI@2
+      displayName: Build IOTProcessor application
+      inputs:
+        command: publish
+        arguments: '--configuration "Release" --output $(Build.ArtifactStagingDirectory)'
+        projects: "iotprocessor/iotprocessor.csproj"
     - task: Docker@2
       displayName: Build Pi2AzIot image
       inputs:
