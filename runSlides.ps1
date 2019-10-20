@@ -1,1 +1,1 @@
-docker run --name tunesql -d --rm -v "$pwd\pres:/app/slides" -p1948:1948 -p35729:35729 yardbirdsax/reveal-md /app/slides -w
+docker run --name projectfreddy -d --rm -v "$pwd\pres:/app/slides" -p1948:1948 -p35729:35729 yardbirdsax/reveal-md /app/slides -w

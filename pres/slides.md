@@ -18,6 +18,8 @@ LinkedIn: https://linkedin.com/in/joshuafeierman
 
 GitHub: https://github.com/yardbirdsax
 
+https://bit.ly/projectfreddy
+
 </div>
 
 ---
@@ -28,8 +30,7 @@ GitHub: https://github.com/yardbirdsax
 * How to choose the problem to solve?
 * An overview of the tech
 * Show me the code!
-* What did I learn?
-* What can (will!) I do better in the next version?
+* What can (will!) I do better / differently in the next version?
 
 ---
 
@@ -52,18 +53,10 @@ NOTES: Why do this? I mean, it's way more complicated and expensive than it need
 <ul>
 <li class="fragment" >Fun</li>
 <li class="fragment" >Efficient</li>
+<li class="fragment" >What tech are you trying to learn?</li>
 </ul>
 
 NOTES: It really comes down to two things: what's fun, and what will help you have more time? With Freddy, by using tech I don't have to go over and check his temperature constantly, plus I'm confident that I'll know if something goes wrong. What are some examples in your own lives?
-
----
-
-## How to choose the problem to solve?
-
-<p class="fragment">What are you trying to learn?</p>
-<ul>
-<li class="fragment" ></li>
-</ul>
 
 ---
 
@@ -76,10 +69,11 @@ NOTES: It really comes down to two things: what's fun, and what will help you ha
 </div>
 <div>
 <img class="fragment" src="images/iothub.png" style="width:150px; border:none" />
+<img class="fragment" src="images/devops.png" style="width:150px; border:none" />
 <img class="fragment" src="images/kubernetes.svg.png" style="width:150px; border:none" />
-<img class="fragment" src="images/netcore.svg.png" style="width:150px; border:none" />
 </div>
 <div>
+<img class="fragment" src="images/netcore.svg.png" style="width:150px; border:none" />
 <img class="fragment" src="images/prometheus.svg.png" style="width:150px; border:none" />
 <img class="fragment" src="images/grafana.png" style="width:150px; border:none" />
 </div>
@@ -90,31 +84,14 @@ NOTES: It really comes down to two things: what's fun, and what will help you ha
 
 ---
 
-## What did I learn?
-
-<ul>
-<li class="fragment" >Creating containerized Python and .NET Core apps</li>
-<li class="fragment" >Building ARM enabled Docker images</li>
-<li class="fragment" >Azure IOT Hubs</li>
-<li class="fragment" >Prometheus (PromQL, scraping, etc)</li>
-<li class="fragment" >Grafana</li>
-</ul>
-
----
-
-## What can (will!) I do better in the next version?
+## What can (will!) I do better / different in the next version?
 
 <ul>
 <li class="fragment" >Don't overcomplicate (except on purpose)</li>
-<li class="fragment" >Iterate and optimize</li>
+<li class="fragment" >Terraform is king</li>
+<li class="fragment" >Serverless?</li>
 </ul>
-
----
-
-## A quick survey
 
 ---
 
 ## Questions?
-
-<div style="width:50%;height:0;padding-bottom:75%;position:relative;"><iframe src="https://giphy.com/embed/yfEjNtvqFBfTa" width="100%" height="100%" style="position:absolute" frameBorder="0" class="giphy-embed" allowFullScreen></iframe></div><p><a href="https://giphy.com/gifs/epilepsy-warning-muppets-yfEjNtvqFBfTa">via GIPHY</a></p>
