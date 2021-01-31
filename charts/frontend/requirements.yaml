@@ -1,9 +1,9 @@
 dependencies:
   - name: prometheus
-    repository: https://kubernetes-charts.storage.googleapis.com/
+    repository: https://prometheus-community.github.io/helm-charts
     condition: prometheus.enabled
-    version: 9.1.0
+    version: 13.2.1
   - name: grafana
-    repository: https://kubernetes-charts.storage.googleapis.com/
+    repository: https://grafana.github.io/helm-charts
     condition: grafana.enabled
-    version: 3.8.6
+    version: 6.2.1
