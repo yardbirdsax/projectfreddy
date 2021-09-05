@@ -5,7 +5,6 @@ on:
       - master
     paths:
       - "telegraf/"
-  workflow_dispatch:
 jobs:
   buildPushDocker:
     name: Build and Push Docker iamge
