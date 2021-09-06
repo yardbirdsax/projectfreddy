@@ -1,4 +1,4 @@
-FROM arm64v8/telegraf:1.19.3
+FROM arm32v7/telegraf:1.19.3
 
 
 LABEL org.opencontainers.image.authors="Josh Feierman"
