@@ -4,3 +4,5 @@ charts/frontend/charts/*
 chart/pi2aziot/charts/*
 **/*.tfstate*
 **/.terraform
+.venv
+.terragrunt-cache
